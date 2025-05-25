@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useUser } from "../../context/UserContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const userContext = useUser(); // 💡 safer than destructuring directly
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -15,21 +17,32 @@ export default function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.user.role);
+      const userData = {
+        token: res.data.token,
+        role: res.data.user.role,
+      };
 
+      // Save in context if available, else fallback to localStorage
+      if (userContext?.login) {
+        userContext.login(userData);
+      } else {
+        // fallback if context isn't loaded properly
+        localStorage.setItem("token", userData.token);
+        localStorage.setItem("role", userData.role);
+      }
+
+      // Redirect based on role
       if (res.data.user.role === "spoc") navigate("/dashboard/spoc");
       else navigate("/dashboard/engineer");
 
     } catch (err) {
-      alert(err.response.data.msg || "Login failed");
+      alert(err?.response?.data?.msg || "Login failed");
     }
   };
 
   return (
     <div className="flex h-screen">
       <div className="w-1/2 bg-gradient-to-br from-blue-900 to-blue-600 flex items-center justify-center">
-        {/* Background Illustration */}
         <h1 className="text-white text-4xl font-bold">Welcome Back!</h1>
       </div>
 
@@ -38,7 +51,7 @@ export default function Login() {
           <h2 className="text-3xl font-bold text-blue-700">Hello!</h2>
           <input
             type="email"
-            placeholder="email"
+            placeholder="Email"
             className="w-full border px-4 py-2 rounded"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -46,7 +59,7 @@ export default function Login() {
           />
           <input
             type="password"
-            placeholder="password"
+            placeholder="Password"
             className="w-full border px-4 py-2 rounded"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -59,7 +72,7 @@ export default function Login() {
             Next →
           </button>
           <p className="text-sm text-center">
-            Don't have an account? <a href="/signup" className="text-blue-600">Create one</a>
+            Don’t have an account? <a href="/signup" className="text-blue-600">Create one</a>
           </p>
         </form>
       </div>

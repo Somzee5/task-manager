@@ -4,18 +4,21 @@ import Signup from "./components/Auth/Signup.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import SpocDashboard from "./pages/SpocDashboard.jsx";
 import EngineerDashboard from "./pages/EngineerDashboard.jsx";
+import DelayedRender from "./components/Loader/DelayedRender.jsx";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      
+      <Route path="/" element={<DelayedRender><Login /></DelayedRender>} />
+      <Route path="/signup" element={<DelayedRender><Signup /></DelayedRender>} />
+
       <Route
         path="/dashboard/spoc"
         element={
           <ProtectedRoute role="spoc">
-            <SpocDashboard />
+            <DelayedRender>
+              <SpocDashboard />
+            </DelayedRender>
           </ProtectedRoute>
         }
       />
@@ -23,8 +26,10 @@ function App() {
       <Route
         path="/dashboard/engineer"
         element={
-          <ProtectedRoute role="engineer">
-            <EngineerDashboard />
+          <ProtectedRoute role="design_engg">
+            <DelayedRender>
+              <EngineerDashboard />
+            </DelayedRender>
           </ProtectedRoute>
         }
       />

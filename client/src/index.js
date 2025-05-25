@@ -4,8 +4,14 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";  // ✅ Make sure this says App.jsx
 import "./index.css";
 
+import { UserProvider } from "./context/UserContext";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </BrowserRouter>
+  </React.StrictMode>
 );

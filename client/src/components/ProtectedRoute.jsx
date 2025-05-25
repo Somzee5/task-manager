@@ -1,11 +1,11 @@
 // src/components/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
+import { useUser } from "../context/UserContext.js"
 
 export default function ProtectedRoute({ children, role }) {
-  const token = localStorage.getItem("token");
-  const userRole = localStorage.getItem("role");
+  const { user } = useUser();
 
-  if (!token || userRole !== role) {
+  if (!user || user.role !== role) {
     return <Navigate to="/" replace />;
   }
 
