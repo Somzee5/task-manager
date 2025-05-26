@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 5001;
 
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/taskRoutes");
+const userRoutes = require("./routes/user");
 
 
 // Middleware
@@ -39,3 +40,4 @@ mongoose
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/users", userRoutes);

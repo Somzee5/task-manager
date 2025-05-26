@@ -5,17 +5,18 @@ import Signup from "./components/Auth/Signup";
 import SpocDashboard from "./pages/SpocDashboard";
 import EngineerDashboard from "./pages/EngineerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DelayedRender from "./components/Loader/DelayedRender.jsx";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/" element={<DelayedRender><Login /></DelayedRender>} />
+      <Route path="/signup" element={<DelayedRender><Signup /></DelayedRender>} />
       <Route
         path="/dashboard/spoc"
         element={
           <ProtectedRoute allowedRole="spoc">
-            <SpocDashboard />
+            <DelayedRender><SpocDashboard /></DelayedRender>
           </ProtectedRoute>
         }
       />
@@ -23,7 +24,7 @@ function App() {
         path="/dashboard/engineer"
         element={
           <ProtectedRoute allowedRole="design_engg">
-            <EngineerDashboard />
+            <DelayedRender><EngineerDashboard /></DelayedRender>
           </ProtectedRoute>
         }
       />

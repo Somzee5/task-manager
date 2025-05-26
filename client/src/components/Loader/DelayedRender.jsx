@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
 
-const DelayedRender = ({ children, delay = 1500 }) => {
+const DelayedRender = ({ children, delay = 1300 }) => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
