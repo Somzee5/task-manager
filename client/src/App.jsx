@@ -1,35 +1,29 @@
+// src/App.jsx
 import { Routes, Route } from "react-router-dom";
-import Login from "./components/Auth/Login.jsx";
-import Signup from "./components/Auth/Signup.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import SpocDashboard from "./pages/SpocDashboard.jsx";
-import EngineerDashboard from "./pages/EngineerDashboard.jsx";
-import DelayedRender from "./components/Loader/DelayedRender.jsx";
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
+import SpocDashboard from "./pages/SpocDashboard";
+import EngineerDashboard from "./pages/EngineerDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<DelayedRender><Login /></DelayedRender>} />
-      <Route path="/signup" element={<DelayedRender><Signup /></DelayedRender>} />
-
+      <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route
         path="/dashboard/spoc"
         element={
-          <ProtectedRoute role="spoc">
-            <DelayedRender>
-              <SpocDashboard />
-            </DelayedRender>
+          <ProtectedRoute allowedRole="spoc">
+            <SpocDashboard />
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/dashboard/engineer"
         element={
-          <ProtectedRoute role="design_engg">
-            <DelayedRender>
-              <EngineerDashboard />
-            </DelayedRender>
+          <ProtectedRoute allowedRole="design_engg">
+            <EngineerDashboard />
           </ProtectedRoute>
         }
       />
