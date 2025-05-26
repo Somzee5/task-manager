@@ -50,12 +50,38 @@ exports.getEngineerTasks = async (req, res) => {
 
 exports.updateTaskByEngineer = async (req, res) => {
   try {
-    const updated = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(updated);
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ msg: "Task not found" });
+
+    const { startDate, actualCompletion, pqcApproved, ...rest } = req.body;
+
+    // Update fields from request
+    Object.assign(task, rest);
+
+    // Track time when fields are updated
+    if (startDate && !task.startedAt) {
+      task.startDate = startDate;
+      task.startedAt = new Date();
+    }
+
+    if (actualCompletion && !task.completedAt) {
+      task.actualCompletion = actualCompletion;
+      task.completedAt = new Date();
+    }
+
+    if (pqcApproved === true && !task.pqcApprovedAt) {
+      task.pqcApproved = true;
+      task.pqcApprovedAt = new Date();
+    }
+
+    const updatedTask = await task.save();
+    res.json(updatedTask);
+
   } catch (err) {
-    res.status(500).json({ msg: "Error updating task" });
+    res.status(500).json({ msg: "Error updating task", error: err.message });
   }
 };
+
 
 // Optional — OTD/SPY Calculation
 exports.getEngineerMetrics = async (req, res) => {

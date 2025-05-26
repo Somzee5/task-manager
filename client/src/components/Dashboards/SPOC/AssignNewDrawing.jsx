@@ -7,8 +7,7 @@ const AssignNewDrawing = () => {
     ecnNumber: "",
     date: "",
     projectDescription: "",
-    status: "hope", // default value
-    assignedTo: "",
+    assignee: "",
   });
 
   const [engineers, setEngineers] = useState([]);
@@ -18,9 +17,9 @@ const AssignNewDrawing = () => {
     const fetchEngineers = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/users?role=design_engg", {
-        headers: {
+          headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+          },
         });
 
         setEngineers(res.data);
@@ -38,20 +37,23 @@ const AssignNewDrawing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await axios.post("http://localhost:5000/api/tasks", formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
       alert("Task assigned successfully!");
+
+      // Reset form
       setFormData({
         typeOfWork: "",
         ecnNumber: "",
         date: "",
         projectDescription: "",
-        status: "hope",
-        assignedTo: "",
+        assignee: "",
       });
     } catch (err) {
       console.error(err);
@@ -60,7 +62,10 @@ const AssignNewDrawing = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 space-y-4 border rounded shadow max-w-xl mx-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 space-y-4 border rounded shadow max-w-xl mx-auto"
+    >
       <h2 className="text-2xl font-bold text-blue-700">Assign New Drawing</h2>
 
       <input
@@ -84,7 +89,7 @@ const AssignNewDrawing = () => {
       />
 
       <input
-        type="date"
+        type="datetime-local"
         name="date"
         value={formData.date}
         onChange={handleChange}
@@ -102,18 +107,8 @@ const AssignNewDrawing = () => {
       />
 
       <select
-        name="status"
-        value={formData.status}
-        onChange={handleChange}
-        className="w-full border px-3 py-2 rounded"
-      >
-        <option value="hope">Hope</option>
-        <option value="cleared">Cleared</option>
-      </select>
-
-      <select
-        name="assignedTo"
-        value={formData.assignedTo}
+        name="assignee"
+        value={formData.assignee}
         onChange={handleChange}
         className="w-full border px-3 py-2 rounded"
         required
