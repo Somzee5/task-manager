@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify"; // Import toast
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toastify
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const AssignNewDrawing = () => {
+// Accept onTaskAssigned as a prop
+const AssignNewDrawing = ({ onTaskAssigned }) => {
   const [formData, setFormData] = useState({
     typeOfWork: "",
     ecnNumber: "",
-    date: "",
+    date: "", // Or assignedAt, as discussed
     projectDescription: "",
     assignee: "",
   });
 
   const [engineers, setEngineers] = useState([]);
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
 
-  // Fetch list of engineers
   useEffect(() => {
     const fetchEngineers = async () => {
       try {
@@ -24,14 +24,12 @@ const AssignNewDrawing = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
         setEngineers(res.data);
       } catch (err) {
         console.error("Error fetching engineers:", err);
-        toast.error("Failed to fetch engineers."); // Show error toast
+        toast.error("Failed to fetch engineers.");
       }
     };
-
     fetchEngineers();
   }, []);
 
@@ -41,7 +39,7 @@ const AssignNewDrawing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true on submission
+    setLoading(true);
 
     try {
       await axios.post("http://localhost:5000/api/tasks", formData, {
@@ -50,9 +48,7 @@ const AssignNewDrawing = () => {
         },
       });
 
-      toast.success("Task assigned successfully!"); // Success toast
-
-      // Reset form
+      toast.success("Task assigned successfully!");
       setFormData({
         typeOfWork: "",
         ecnNumber: "",
@@ -60,20 +56,26 @@ const AssignNewDrawing = () => {
         projectDescription: "",
         assignee: "",
       });
+
+      // ⭐ Call the callback function to hide the form or trigger table refresh
+      if (onTaskAssigned) {
+        onTaskAssigned();
+      }
+
     } catch (err) {
       console.error(err);
-      toast.error("Failed to assign task."); // Error toast
+      toast.error(err.response?.data?.msg || "Failed to assign task.");
     } finally {
-      setLoading(false); // Set loading back to false
+      setLoading(false);
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 space-y-4 border rounded shadow max-w-xl mx-auto"
+      className="p-6 space-y-4 border rounded-lg shadow-lg max-w-xl mx-auto bg-gray-50 mb-8" // Added shadow and margin-bottom
     >
-      <h2 className="text-2xl font-bold text-blue-700">Assign New Drawing</h2>
+      <h2 className="text-2xl font-bold text-blue-700 mb-4">Assign New Drawing</h2>
 
       <input
         type="text"
@@ -81,7 +83,7 @@ const AssignNewDrawing = () => {
         placeholder="Type of Work"
         value={formData.typeOfWork}
         onChange={handleChange}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
         required
       />
 
@@ -91,16 +93,20 @@ const AssignNewDrawing = () => {
         placeholder="ECN Number"
         value={formData.ecnNumber}
         onChange={handleChange}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
         required
       />
 
+      <label htmlFor="assignedDate" className="block text-sm font-medium text-gray-700">
+        Date Assigned:
+      </label>
       <input
+        id="assignedDate"
         type="datetime-local"
         name="date"
         value={formData.date}
         onChange={handleChange}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
         required
       />
 
@@ -109,7 +115,8 @@ const AssignNewDrawing = () => {
         placeholder="Project Description"
         value={formData.projectDescription}
         onChange={handleChange}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        rows="3" // Added rows for better textarea appearance
         required
       />
 
@@ -117,23 +124,23 @@ const AssignNewDrawing = () => {
         name="assignee"
         value={formData.assignee}
         onChange={handleChange}
-        className="w-full border px-3 py-2 rounded"
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
         required
       >
         <option value="">-- Assign to Engineer --</option>
         {engineers.map((eng) => (
           <option key={eng._id} value={eng._id}>
-            {eng.name}
+            {eng.name} ({eng.email}) {/* Showing name and email for clarity */}
           </option>
         ))}
       </select>
 
       <button
         type="submit"
-        className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 disabled:opacity-50"
-        disabled={loading} // Disable button when loading
+        className="w-full bg-blue-700 text-white py-3 rounded-md hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200 ease-in-out font-semibold"
+        disabled={loading}
       >
-        {loading ? "Assigning..." : "Assign"}
+        {loading ? "Assigning..." : "Assign Task"}
       </button>
     </form>
   );

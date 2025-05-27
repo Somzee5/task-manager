@@ -8,6 +8,7 @@ const auth = require("../middleware/auth.js"); // ✅ correct middleware
 // SPOC routes
 router.post("/", auth, taskController.createTask);
 router.get("/spoc", auth, taskController.getSpocTasks);
+router.delete("/:id", auth, taskController.deleteTask);
 
 // Engineer routes
 router.get("/engineer", auth, taskController.getEngineerTasks);
