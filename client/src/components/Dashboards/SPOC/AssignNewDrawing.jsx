@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify"; // Import toast
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toastify
 
 const AssignNewDrawing = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +13,7 @@ const AssignNewDrawing = () => {
   });
 
   const [engineers, setEngineers] = useState([]);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   // Fetch list of engineers
   useEffect(() => {
@@ -25,6 +28,7 @@ const AssignNewDrawing = () => {
         setEngineers(res.data);
       } catch (err) {
         console.error("Error fetching engineers:", err);
+        toast.error("Failed to fetch engineers."); // Show error toast
       }
     };
 
@@ -37,6 +41,7 @@ const AssignNewDrawing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true on submission
 
     try {
       await axios.post("http://localhost:5000/api/tasks", formData, {
@@ -45,7 +50,7 @@ const AssignNewDrawing = () => {
         },
       });
 
-      alert("Task assigned successfully!");
+      toast.success("Task assigned successfully!"); // Success toast
 
       // Reset form
       setFormData({
@@ -57,7 +62,9 @@ const AssignNewDrawing = () => {
       });
     } catch (err) {
       console.error(err);
-      alert("Failed to assign task.");
+      toast.error("Failed to assign task."); // Error toast
+    } finally {
+      setLoading(false); // Set loading back to false
     }
   };
 
@@ -123,9 +130,10 @@ const AssignNewDrawing = () => {
 
       <button
         type="submit"
-        className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800"
+        className="w-full bg-blue-700 text-white py-2 rounded hover:bg-blue-800 disabled:opacity-50"
+        disabled={loading} // Disable button when loading
       >
-        Assign
+        {loading ? "Assigning..." : "Assign"}
       </button>
     </form>
   );
