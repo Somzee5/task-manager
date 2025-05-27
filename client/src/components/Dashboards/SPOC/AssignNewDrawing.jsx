@@ -3,14 +3,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Accept onTaskAssigned as a prop
 const AssignNewDrawing = ({ onTaskAssigned }) => {
   const [formData, setFormData] = useState({
     typeOfWork: "",
     ecnNumber: "",
-    date: "", // Or assignedAt, as discussed
+    // We will no longer need 'date' in formData state if it's auto-captured
+    // Instead, it will be added directly to dataToSend in handleSubmit
     projectDescription: "",
     assignee: "",
+    plannedCompletion: "",
   });
 
   const [engineers, setEngineers] = useState([]);
@@ -42,22 +43,28 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/tasks", formData, {
+      // Create the data object to send, automatically including the current date/time for assignedAt
+      const dataToSend = {
+        ...formData,
+        assignedAt: new Date().toISOString(), // ⭐ Auto-capture current date and time
+      };
+
+      await axios.post("http://localhost:5000/api/tasks", dataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       toast.success("Task assigned successfully!");
+      // Reset form, no 'date' to reset anymore
       setFormData({
         typeOfWork: "",
         ecnNumber: "",
-        date: "",
         projectDescription: "",
         assignee: "",
+        plannedCompletion: "",
       });
 
-      // ⭐ Call the callback function to hide the form or trigger table refresh
       if (onTaskAssigned) {
         onTaskAssigned();
       }
@@ -73,7 +80,7 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 space-y-4 border rounded-lg shadow-lg max-w-xl mx-auto bg-gray-50 mb-8" // Added shadow and margin-bottom
+      className="p-6 space-y-4 border rounded-lg shadow-lg max-w-xl mx-auto bg-gray-50 mb-8"
     >
       <h2 className="text-2xl font-bold text-blue-700 mb-4">Assign New Drawing</h2>
 
@@ -97,7 +104,8 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
         required
       />
 
-      <label htmlFor="assignedDate" className="block text-sm font-medium text-gray-700">
+      {/* Removed the manual Date Assigned input field entirely */}
+      {/* <label htmlFor="assignedDate" className="block text-sm font-medium text-gray-700">
         Date Assigned:
       </label>
       <input
@@ -105,6 +113,23 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
         type="datetime-local"
         name="date"
         value={formData.date}
+        onChange={handleChange}
+        className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        required
+      /> */}
+      <p className="text-sm text-gray-600">
+        <span className="font-semibold">Date Assigned:</span> Automatically set to current date and time upon submission.
+      </p>
+
+
+      <label htmlFor="plannedCompletionDate" className="block text-sm font-medium text-gray-700">
+        Planned Completion Date:
+      </label>
+      <input
+        id="plannedCompletionDate"
+        type="date"
+        name="plannedCompletion"
+        value={formData.plannedCompletion}
         onChange={handleChange}
         className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
         required
@@ -116,7 +141,7 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
         value={formData.projectDescription}
         onChange={handleChange}
         className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-blue-500 focus:border-blue-500"
-        rows="3" // Added rows for better textarea appearance
+        rows="3"
         required
       />
 
@@ -130,7 +155,7 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
         <option value="">-- Assign to Engineer --</option>
         {engineers.map((eng) => (
           <option key={eng._id} value={eng._id}>
-            {eng.name} ({eng.email}) {/* Showing name and email for clarity */}
+            {eng.name} ({eng.email})
           </option>
         ))}
       </select>
