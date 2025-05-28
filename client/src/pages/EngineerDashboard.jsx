@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useUser } from "../context/UserContext";
 import AssignedTaskTable from "../components/Dashboards/Engineer/AssignedTaskTable";
 import MetricsCard from "../components/Dashboards/Engineer/MetricsCard";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from "../utils/api"
 
 const EngineerDashboard = () => {
   const { user, logout } = useUser(); // Get user details and logout function
@@ -26,7 +26,7 @@ const EngineerDashboard = () => {
         return;
       }
 
-      const res = await axios.get("http://localhost:5000/api/tasks/engineer", {
+      const res = await api.get("/api/tasks/engineer", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,7 +54,7 @@ const EngineerDashboard = () => {
         return;
       }
 
-      const res = await axios.get("http://localhost:5000/api/tasks/engineer/metrics", {
+      const res = await api.get("/api/tasks/engineer/metrics", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

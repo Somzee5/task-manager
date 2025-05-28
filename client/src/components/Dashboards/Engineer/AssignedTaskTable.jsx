@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { toast } from 'react-toastify';
+import api from "../../../utils/api"
 
 const AssignedTaskTable = ({ tasks, refreshTasks }) => {
   // Function to determine status color and text (consistent with SPOC view)
@@ -60,8 +60,8 @@ const AssignedTaskTable = ({ tasks, refreshTasks }) => {
       }
 
 
-      await axios.put(
-        `http://localhost:5000/api/tasks/${taskId}`,
+      await api.put(
+        `/api/tasks/${taskId}`,
         updateData,
         {
           headers: {

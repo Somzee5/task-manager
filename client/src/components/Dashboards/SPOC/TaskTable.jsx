@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from "../../../utils/api"
 
 const TaskTable = () => {
   const [tasks, setTasks] = useState([]);
@@ -21,7 +21,7 @@ const TaskTable = () => {
           return;
         }
 
-        const res = await axios.get("http://localhost:5000/api/tasks/spoc", {
+        const res = await api.get("/api/tasks/spoc", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -79,7 +79,7 @@ const TaskTable = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, {
+      await api.delete(`/api/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -17,20 +17,8 @@ const GaugeChart = ({ percentage, color, labelColor }) => {
         width={radius * 2}
         height={radius + strokeWidth / 2 + 10}
         viewBox={`0 0 ${radius * 2} ${radius * 2}`}
-        // Rotate the entire SVG element by 0 degrees for top start, then rotate 90 degrees for anti-clockwise
-        // Effectively, rotating from -90 (top) to 0 (right) is 90 degrees clockwise.
-        // To go 90 degrees anti-clockwise from top, we need to go to -180 degrees.
-        // Or, simply rotate by 0 for horizontal (right side start), and then make the fill anti-clockwise
-        // by adjusting the dashoffset further.
-        // Let's try simple rotation:
-        //className="transform rotate-0" // Start at the right (0 degrees), this will make the semi-circle flat.
-                                     // For 90 degrees anti-clockwise *from the top*, we need to go to -180.
-                                     // If we want 0% at the top and fill anti-clockwise, we start at the top (-90)
-                                     // and then reverse the fill logic.
-
-        // Re-evaluating based on "rotate 90 degrees anti-clockwise from current state":
-        // Current state: `className="transform -rotate-90"` (0% top, fill clockwise)
-        // To rotate 90 degrees anti-clockwise from -90 degrees, we go to -90 - 90 = -180 degrees.
+        
+        
         className="transform -rotate-180" // Rotate 90 degrees anti-clockwise from -90
       >
         {/* Background arc */}
@@ -39,11 +27,11 @@ const GaugeChart = ({ percentage, color, labelColor }) => {
           cy={radius}
           r={effectiveRadius}
           fill="none"
-          stroke="#E0E0E0" // Light gray for the background
+          stroke="#E0E0E0" 
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={fullCircumference}
-          strokeDashoffset={semiCircumference} // Shows only half the circle
+          strokeDashoffset={semiCircumference} 
           className="origin-center"
         />
 

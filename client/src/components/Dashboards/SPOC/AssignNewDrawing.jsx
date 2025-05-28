@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../../../utils/api"
 
 const AssignNewDrawing = ({ onTaskAssigned }) => {
   const [formData, setFormData] = useState({
@@ -20,7 +20,7 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
   useEffect(() => {
     const fetchEngineers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users?role=design_engg", {
+        const res = await api.get("/api/users?role=design_engg", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -49,7 +49,7 @@ const AssignNewDrawing = ({ onTaskAssigned }) => {
         assignedAt: new Date().toISOString(), // ⭐ Auto-capture current date and time
       };
 
-      await axios.post("http://localhost:5000/api/tasks", dataToSend, {
+      await api.post("/api/tasks", dataToSend, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
