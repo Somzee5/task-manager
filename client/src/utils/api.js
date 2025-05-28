@@ -2,7 +2,7 @@ import axios from 'axios'; // Assuming you are using axios
 
 // This environment variable will be set on Render for production,
 // and will default to localhost:5000 for local development.
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 // Create an axios instance with a base URL
 const api = axios.create({
